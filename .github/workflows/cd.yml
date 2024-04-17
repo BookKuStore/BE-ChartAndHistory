@@ -32,17 +32,17 @@
 
         - name: Build
           run: |
-            docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/profile:latest .
+            docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/ChartAndHistory:latest .
 
         - name: Push
           run: |
-            docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/profile:latest
+            docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/ChartAndHistory:latest
 
         - name: Deploy
           run: |
-            gcloud run deploy profile \
+            gcloud run deploy ChartAndHistory \
             --region europe-west1 \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/profile \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/ChartAndHistory \
             --platform managed \
             --allow-unauthenticated \
             --project ${{ secrets.GCP_PROJECT_ID }} \
