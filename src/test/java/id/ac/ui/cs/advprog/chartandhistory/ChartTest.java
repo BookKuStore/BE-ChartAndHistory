@@ -12,7 +12,7 @@ public class ChartTest {
     private List<Product> products;
 
     @BeforeEach
-    void setKeranjangBelanja(){
+    void setChart(){
         this.products = new ArrayList<>();
 
         Product product1 = new Product();
