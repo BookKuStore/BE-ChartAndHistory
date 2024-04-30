@@ -1,1 +1,1 @@
-rootProject.name = "ChartAndHistory"
+rootProject.name = "ChartAndHistory_BookKu"
