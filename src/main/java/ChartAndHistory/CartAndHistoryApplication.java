@@ -1,13 +1,13 @@
-package id.ac.ui.cs.advprog.chartandhistory;
+package ChartAndHistory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ChartAndHistoryApplication {
+public class CartAndHistoryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ChartAndHistoryApplication.class, args);
+        SpringApplication.run(CartAndHistoryApplication.class, args);
     }
 
 }
