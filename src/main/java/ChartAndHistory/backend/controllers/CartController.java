@@ -9,8 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/carts")
 public class CartController {
+
     private final CartService cartService;
 
     @Autowired
@@ -18,43 +26,33 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/api/cart/{ownerId}")
-    @ResponseBody
-    public ResponseEntity<Cart> getCart(@PathVariable String ownerId) {
-        Cart cart = cartService.getCartByOwnerId(ownerId);
-        if (cart != null) {
-            return new ResponseEntity<>(cart, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @PostMapping
+    public ResponseEntity<Cart> createCart(@RequestBody Cart cart) {
+        Cart savedCart = cartService.saveCart(cart);
+        return ResponseEntity.ok(savedCart);
     }
 
-    @PostMapping("/api/cart/{ownerId}/add")
-    @ResponseBody
-    public ResponseEntity<Cart> addProductToCart(@PathVariable String ownerId, @RequestBody Product product) {
-        Cart cart = cartService.addProductToCart(ownerId, product);
-        if (cart != null) {
-            return new ResponseEntity<>(cart, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping
+    public ResponseEntity<List<Cart>> getAllCarts() {
+        List<Cart> carts = cartService.getAllCarts();
+        return ResponseEntity.ok(carts);
     }
 
-    @PostMapping("/api/cart/{ownerId}/remove")
-    @ResponseBody
-    public ResponseEntity<Cart> removeProductFromCart(@PathVariable String ownerId, @RequestBody Product product) {
-        boolean cart = cartService.removeProductFromCart(ownerId, product.getProductId());
-        if (cart == true) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Cart> getCartById(@PathVariable long id) {
+        Cart cart = cartService.getCartById(id);
+        return ResponseEntity.ok(cart);
     }
 
-    @DeleteMapping("/api/cart/{ownerId}/clear")
-    @ResponseBody
-    public ResponseEntity<Void> clearCart(@PathVariable String ownerId) {
-        cartService.clearCart(ownerId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PostMapping("/{id}/products")
+    public ResponseEntity<Void> addProductToCart(@PathVariable long id, @RequestBody Product product) {
+        cartService.addProductToCart(id, product);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}/products")
+    public ResponseEntity<Void> removeProductFromCart(@PathVariable long id, @RequestBody Product product) {
+        cartService.removeProductFromCart(id, product);
+        return ResponseEntity.ok().build();
     }
 }

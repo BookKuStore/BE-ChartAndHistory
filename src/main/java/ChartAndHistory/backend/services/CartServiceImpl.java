@@ -4,62 +4,68 @@ import ChartAndHistory.backend.models.Cart;
 import ChartAndHistory.backend.models.Product;
 import ChartAndHistory.backend.repository.CartRepository;
 import ChartAndHistory.backend.services.CartService;
+import ChartAndHistory.backend.observers.CartObserver;
+import ChartAndHistory.backend.observers.CartSubject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-@Service
-public class CartServiceImpl implements CartService {
-    private final CartRepository cartRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    private static CartServiceImpl instance;
+import java.util.List;
+
+@Service
+public class CartServiceImpl implements CartService, CartObserver {
+
+    private final CartRepository cartRepository;
+    private final CartSubject cartSubject = new CartSubject();
 
     @Autowired
     public CartServiceImpl(CartRepository cartRepository) {
         this.cartRepository = cartRepository;
-        if (instance == null) {
-            synchronized (CartServiceImpl.class) {
-                if (instance == null) {
-                    instance = this;
-                }
-            }
+        cartSubject.attach(this);
+    }
+
+    @Override
+    public Cart saveCart(Cart cart) {
+        Cart savedCart = cartRepository.save(cart);
+        cartSubject.setCart(savedCart);
+        return savedCart;
+    }
+
+    @Override
+    public List<Cart> getAllCarts() {
+        return cartRepository.findAll();
+    }
+
+    @Override
+    public Cart getCartById(long id) {
+        return cartRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void addProductToCart(long cartId, Product product) {
+        Cart cart = getCartById(cartId);
+        if (cart != null) {
+            cart.addProduct(product);
+            saveCart(cart);
         }
     }
 
-//    public static CartServiceImpl getInstance() {
-//        return instance;
-//    }
-
     @Override
-    public Cart getCartByOwnerId(String ownerId) {
-        return cartRepository.findByOwnerId(ownerId).orElse(new Cart(ownerId, new ArrayList<>()));
-    }
-
-    @Override
-    public Cart addProductToCart(String ownerId, Product product) {
-        Cart cart = getCartByOwnerId(ownerId);
-        cart.getProducts().add(product);
-        return cartRepository.save(cart);
-    }
-
-    @Override
-    public boolean removeProductFromCart(String ownerId, long productId) {
-        Optional<Cart> cartOptional = cartRepository.findByOwnerId(ownerId);
-        if (cartOptional.isPresent()) {
-            Cart cart = cartOptional.get();
-            boolean removed = cart.getProducts().removeIf(product -> product.getProductId() == productId);
-            if (removed) {
-                cartRepository.save(cart);
-            }
-            return removed;
+    public void removeProductFromCart(long cartId, Product product) {
+        Cart cart = getCartById(cartId);
+        if (cart != null) {
+            cart.removeProduct(product);
+            saveCart(cart);
         }
-        return false;
     }
 
     @Override
-    public void clearCart(String ownerId) {
-        cartRepository.deleteByOwnerId(ownerId);
+    public void update(Cart cart) {
+        System.out.println("Cart updated: " + cart);
     }
 }

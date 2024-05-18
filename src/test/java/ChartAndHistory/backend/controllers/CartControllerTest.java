@@ -12,73 +12,73 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-class CartControllerTest {
+import java.util.Arrays;
+import java.util.List;
 
+public class CartControllerTest {
+
+    @Mock
     private CartService cartService;
+
+    @InjectMocks
     private CartController cartController;
+
+    private Cart cart;
+    private Product product;
 
     @BeforeEach
     void setUp() {
-        cartService = Mockito.mock(CartService.class);
-        cartController = new CartController(cartService);
+        MockitoAnnotations.openMocks(this);
+        cart = new Cart();
+        cart.setCartId(1L);
+        product = new Product();
+        product.setProductId(1L);
+        product.setProductName("Product 1");
+        product.setPrice(100.0);
     }
 
     @Test
-    void getCart_whenCartExists_shouldReturnCart() {
-        Cart cart = new Cart("ownerId", null);
-        when(cartService.getCartByOwnerId(anyString())).thenReturn(cart);
-
-        ResponseEntity<Cart> response = cartController.getCart("ownerId");
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void testCreateCart() {
+        when(cartService.saveCart(cart)).thenReturn(cart);
+        ResponseEntity<Cart> response = cartController.createCart(cart);
         assertEquals(cart, response.getBody());
+        verify(cartService, times(1)).saveCart(cart);
     }
 
     @Test
-    void getCart_whenCartDoesNotExist_shouldReturnNotFound() {
-        when(cartService.getCartByOwnerId(anyString())).thenReturn(null);
-
-        ResponseEntity<Cart> response = cartController.getCart("ownerId");
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    void testGetAllCarts() {
+        List<Cart> carts = Arrays.asList(new Cart(), new Cart());
+        when(cartService.getAllCarts()).thenReturn(carts);
+        ResponseEntity<List<Cart>> response = cartController.getAllCarts();
+        assertEquals(carts, response.getBody());
+        verify(cartService, times(1)).getAllCarts();
     }
 
     @Test
-    void addProductToCart_shouldReturnUpdatedCart() {
-        Cart cart = new Cart("ownerId", null);
-        Product product = new Product();
-        when(cartService.addProductToCart(anyString(), any(Product.class))).thenReturn(cart);
-
-        ResponseEntity<Cart> response = cartController.addProductToCart("ownerId", product);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void testGetCartById() {
+        when(cartService.getCartById(1L)).thenReturn(cart);
+        ResponseEntity<Cart> response = cartController.getCartById(1L);
         assertEquals(cart, response.getBody());
+        verify(cartService, times(1)).getCartById(1L);
     }
 
     @Test
-    void removeProductFromCart_whenProductExists_shouldReturnOk() {
-        when(cartService.removeProductFromCart(anyString(), anyLong())).thenReturn(true);
-
-        ResponseEntity<Cart> response = cartController.removeProductFromCart("ownerId", new Product());
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+    void testAddProductToCart() {
+        doNothing().when(cartService).addProductToCart(1L, product);
+        ResponseEntity<Void> response = cartController.addProductToCart(1L, product);
+        assertEquals(200, response.getStatusCodeValue());
+        verify(cartService, times(1)).addProductToCart(1L, product);
     }
 
     @Test
-    void removeProductFromCart_whenProductDoesNotExist_shouldReturnNotFound() {
-        when(cartService.removeProductFromCart(anyString(), anyLong())).thenReturn(false);
-
-        ResponseEntity<Cart> response = cartController.removeProductFromCart("ownerId", new Product());
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    void clearCart_shouldReturnNoContent() {
-        ResponseEntity<Void> response = cartController.clearCart("ownerId");
-
-        verify(cartService, times(1)).clearCart("ownerId");
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    void testRemoveProductFromCart() {
+        doNothing().when(cartService).removeProductFromCart(1L, product);
+        ResponseEntity<Void> response = cartController.removeProductFromCart(1L, product);
+        assertEquals(200, response.getStatusCodeValue());
+        verify(cartService, times(1)).removeProductFromCart(1L, product);
     }
 }

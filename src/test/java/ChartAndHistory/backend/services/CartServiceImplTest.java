@@ -13,69 +13,76 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-class CartServiceImplTest {
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
+public class CartServiceImplTest {
+
+    @Mock
     private CartRepository cartRepository;
+
+    @InjectMocks
     private CartServiceImpl cartService;
+
+    private Cart cart;
+    private Product product;
 
     @BeforeEach
     void setUp() {
-        cartRepository = Mockito.mock(CartRepository.class);
-        cartService = new CartServiceImpl(cartRepository);
+        MockitoAnnotations.openMocks(this);
+        cart = new Cart();
+        cart.setCartId(1L);
+        product = new Product();
+        product.setProductId(1L);
+        product.setProductName("Product 1");
+        product.setPrice(100.0);
     }
 
     @Test
-    void getCartByOwnerId_shouldReturnCart() {
-        Cart cart = new Cart("ownerId", new ArrayList<>());
-        when(cartRepository.findByOwnerId(anyString())).thenReturn(Optional.of(cart));
-
-        Cart result = cartService.getCartByOwnerId("ownerId");
-
-        assertEquals("ownerId", result.getOwnerId());
-    }
-
-    @Test
-    void addProductToCart_shouldAddProduct() {
-        Cart cart = new Cart("ownerId", new ArrayList<>());
-        Product product = new Product(1L, "Product", 10.0);
-        when(cartRepository.findByOwnerId(anyString())).thenReturn(Optional.of(cart));
+    void testSaveCart() {
         when(cartRepository.save(cart)).thenReturn(cart);
-
-        Cart result = cartService.addProductToCart("ownerId", product);
-
-        assertEquals(1, result.getProducts().size());
-        assertEquals(product, result.getProducts().get(0));
+        Cart savedCart = cartService.saveCart(cart);
+        assertEquals(cart, savedCart);
+        verify(cartRepository, times(1)).save(cart);
     }
 
     @Test
-    void removeProductFromCart_shouldRemoveProduct() {
-        Product product = new Product(1L, "Product", 10.0);
-        ArrayList<Product> products = new ArrayList<>();
-        products.add(product);
-        Cart cart = new Cart("ownerId", products);
-        when(cartRepository.findByOwnerId(anyString())).thenReturn(Optional.of(cart));
-
-        boolean result = cartService.removeProductFromCart("ownerId", 1L);
-
-        assertTrue(result);
-        assertTrue(cart.getProducts().isEmpty());
+    void testGetAllCarts() {
+        List<Cart> carts = Arrays.asList(new Cart(), new Cart());
+        when(cartRepository.findAll()).thenReturn(carts);
+        List<Cart> result = cartService.getAllCarts();
+        assertEquals(carts, result);
+        verify(cartRepository, times(1)).findAll();
     }
 
     @Test
-    void removeProductFromCart_shouldReturnFalseWhenProductNotFound() {
-        Cart cart = new Cart("ownerId", new ArrayList<>());
-        when(cartRepository.findByOwnerId(anyString())).thenReturn(Optional.of(cart));
-
-        boolean result = cartService.removeProductFromCart("ownerId", 1L);
-
-        assertFalse(result);
+    void testGetCartById() {
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        Cart result = cartService.getCartById(1L);
+        assertEquals(cart, result);
+        verify(cartRepository, times(1)).findById(1L);
     }
 
     @Test
-    void clearCart_shouldClearCart() {
-        cartService.clearCart("ownerId");
+    void testAddProductToCart() {
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        cartService.addProductToCart(1L, product);
+        assertEquals(1, cart.getProducts().size());
+        assertEquals(product, cart.getProducts().get(0));
+        verify(cartRepository, times(2)).save(cart);
+    }
 
-        verify(cartRepository, times(1)).deleteByOwnerId("ownerId");
+    @Test
+    void testRemoveProductFromCart() {
+        cart.addProduct(product);
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        cartService.removeProductFromCart(1L, product);
+        assertEquals(0, cart.getProducts().size());
+        verify(cartRepository, times(2)).save(cart);
     }
 }
