@@ -68,4 +68,40 @@ public class CartServiceImpl implements CartService, CartObserver {
     public void update(Cart cart) {
         System.out.println("Cart updated: " + cart);
     }
+
+    @Override
+    public void deleteCartById(long id) {
+        cartRepository.deleteById(id);
+    }
+
+    @Override
+    public void resetCart(long cartId) {
+        Cart cart = getCartById(cartId);
+        if (cart != null) {
+            cart.emptyCart();
+            saveCart(cart);
+        }
+    }
+
+    @Override
+    public Product getProductFromCartById(long cartId, long productId) {
+        Cart cart = getCartById(cartId);
+        if (cart != null) {
+            for (Product product : cart.getProducts()) {
+                if (product.getProductId() == productId) {
+                    return product;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void removeProductFromCartByProductId(long cartId, long productId) {
+        Cart cart = getCartById(cartId);
+        if (cart != null) {
+            cart.getProducts().removeIf(product -> product.getProductId() == productId);
+            saveCart(cart);
+        }
+    }
 }

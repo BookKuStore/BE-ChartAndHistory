@@ -56,4 +56,32 @@ public class CartController {
         cartService.removeProductFromCart(id, product);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCartById(@PathVariable long id) {
+        cartService.deleteCartById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/reset")
+    public ResponseEntity<Void> resetCart(@PathVariable long id) {
+        cartService.resetCart(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{cartId}/products/{productId}")
+    public ResponseEntity<Product> getProductFromCartById(@PathVariable long cartId, @PathVariable long productId) {
+        Product product = cartService.getProductFromCartById(cartId, productId);
+        if (product != null) {
+            return ResponseEntity.ok(product);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}/products/{productId}")
+    public ResponseEntity<Void> removeProductFromCartByProductId(@PathVariable long id, @PathVariable long productId) {
+        cartService.removeProductFromCartByProductId(id, productId);
+        return ResponseEntity.ok().build();
+    }
 }

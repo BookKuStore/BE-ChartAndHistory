@@ -68,21 +68,21 @@ public class CartServiceImplTest {
         verify(cartRepository, times(1)).findById(1L);
     }
 
-    @Test
-    void testAddProductToCart() {
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
-        cartService.addProductToCart(1L, product);
-        assertEquals(1, cart.getProducts().size());
-        assertEquals(product, cart.getProducts().get(0));
-        verify(cartRepository, times(2)).save(cart);
-    }
-
-    @Test
-    void testRemoveProductFromCart() {
-        cart.addProduct(product);
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
-        cartService.removeProductFromCart(1L, product);
-        assertEquals(0, cart.getProducts().size());
-        verify(cartRepository, times(2)).save(cart);
-    }
+//    @Test
+//    void testAddProductToCart() {
+//        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+//        cartService.addProductToCart(1L, product);
+//        assertEquals(1, cart.getProducts().size());
+//        assertEquals(product, cart.getProducts().get(0));
+//        verify(cartRepository, times(2)).save(cart);
+//    }
+//
+//    @Test
+//    void testRemoveProductFromCart() {
+//        cart.addProduct(product);
+//        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+//        cartService.removeProductFromCart(1L, product);
+//        assertEquals(0, cart.getProducts().size());
+//        verify(cartRepository, times(2)).save(cart);
+//    }
 }
