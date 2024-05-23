@@ -86,8 +86,11 @@ jobs:
           name: java-app
       - name: check directory
         run: ls -al
-      - name: Docker login
-        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.REGISTRY_USER }} --password-stdin docker.io
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set Docker BuildKit
         run: export DOCKER_BUILDKIT=1
       - name: Build Docker Image
