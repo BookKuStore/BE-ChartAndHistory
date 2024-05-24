@@ -18,7 +18,5 @@ public class History {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "history_id")
-    private List<Product> products;
-
-    private double totalPrice;
+    private List<Cart> paidCheckouts;
 }

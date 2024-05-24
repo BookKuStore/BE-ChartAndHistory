@@ -1,6 +1,7 @@
 package ChartAndHistory.backend.controllers;
 
 import ChartAndHistory.backend.models.History;
+import ChartAndHistory.backend.models.Cart;
 import ChartAndHistory.backend.services.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +22,8 @@ public class HistoryController {
     }
 
     @PostMapping
-    public ResponseEntity<History> createHistory(@RequestBody History history) {
-        History savedHistory = historyService.saveHistory(history);
+    public ResponseEntity<History> createHistory(@RequestBody List<Cart> paidCheckouts) {
+        History savedHistory = historyService.saveHistory(paidCheckouts);
         return ResponseEntity.ok(savedHistory);
     }
 
@@ -37,4 +38,15 @@ public class HistoryController {
         History history = historyService.getHistoryById(id);
         return ResponseEntity.ok(history);
     }
+
+    @PostMapping("/{id}/add-cart")
+    public ResponseEntity<History> addCartToHistory(@PathVariable long id, @RequestBody Cart cart) {
+        History updatedHistory = historyService.addCartToHistory(id, cart);
+        if (updatedHistory != null) {
+            return ResponseEntity.ok(updatedHistory);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
+

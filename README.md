@@ -19,3 +19,9 @@
   3. Fleksibel. Dengan menggunakan arsitektur microservices, aplikasi dapat dibangun sebagai serangkaian layanan kecil yang independen satu sama lain. Ini memungkinkan pengembang untuk mengembangkan, menyebarkan, dan memperbarui setiap layanan secara terpisah tanpa mempengaruhi bagian lain dari aplikasi.
   4. Skalabilitas. Arsitektur microservices memungkinkan skalabilitas horizontal, yang berarti Anda dapat meningkatkan kapasitas aplikasi dengan menambah atau mengurangi instance layanan secara independen.
 </details>
+
+### Component Diagram
+![image](https://github.com/BookKuStore/BE-ChartAndHistory/assets/124953758/11557534-a3f9-433f-8187-bf666d91a969)
+
+### Code Diagram
+![image](https://github.com/BookKuStore/BE-ChartAndHistory/assets/124953758/2575540f-3469-4ef5-a2b4-304b0c3b8108)
