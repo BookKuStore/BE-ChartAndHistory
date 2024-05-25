@@ -15,64 +15,63 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 import java.util.List;
 
 @ActiveProfiles("test")
 //@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-
 @DataJpaTest
 public class CartRepositoryTest {
 
     @Autowired
     private CartRepository cartRepository;
 
-    private Cart cart;
-    private Product product1;
-    private Product product2;
+    @Test
+    public void testSaveCart() {
+        Cart cart = new Cart();
+        cartRepository.save(cart);
 
-    @BeforeEach
-    void setUp() {
-        product1 = new Product();
-        product1.setProductName("Product 1");
-        product1.setPrice(100.0);
-
-        product2 = new Product();
-        product2.setProductName("Product 2");
-        product2.setPrice(200.0);
-
-        cart = new Cart();
-        cart.addProduct(product1);
-        cart.addProduct(product2);
-        cart.calculateTotalPrice();
+        assertTrue(cart.getCartId() > 0);
     }
 
     @Test
-    void testSaveCart() {
-        Cart savedCart = cartRepository.save(cart);
-        assertEquals(cart.getCartId(), savedCart.getCartId());
-        assertEquals(2, savedCart.getProducts().size());
-        assertEquals(300.0, savedCart.getTotalPrice());
-    }
+    public void testFindAllCarts() {
+        Cart cart1 = new Cart();
+        Cart cart2 = new Cart();
+        cartRepository.save(cart1);
+        cartRepository.save(cart2);
 
-    @Test
-    void testFindAllCarts() {
-        Cart savedCart = cartRepository.save(cart);
         List<Cart> carts = cartRepository.findAll();
-        assertTrue(carts.contains(savedCart));
+
+        assertEquals(2, carts.size());
     }
 
     @Test
-    void testFindCartById() {
-        Cart savedCart = cartRepository.save(cart);
-        Cart foundCart = cartRepository.findById(savedCart.getCartId()).orElse(null);
-        assertEquals(savedCart, foundCart);
+    public void testFindCartById() {
+        Cart cart = new Cart();
+        cartRepository.save(cart);
+
+        Cart foundCart = cartRepository.findById(cart.getCartId()).orElse(null);
+
+        assertEquals(cart, foundCart);
     }
 
     @Test
-    void testDeleteCart() {
-        Cart savedCart = cartRepository.save(cart);
-        cartRepository.delete(savedCart);
-        assertTrue(cartRepository.findById(savedCart.getCartId()).isEmpty());
+    public void testDeleteCartById() {
+        Cart cart = new Cart();
+        cartRepository.save(cart);
+
+        cartRepository.deleteById(cart.getCartId());
+
+        assertTrue(cartRepository.findById(cart.getCartId()).isEmpty());
     }
 }

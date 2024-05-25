@@ -15,56 +15,62 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class CartTest {
 
-    private Cart cart;
-    private Product product1;
-    private Product product2;
-
-    @BeforeEach
-    void setUp() {
-        cart = new Cart();
-        product1 = new Product();
-        product1.setProductId(1L);
-        product1.setProductName("Product 1");
-        product1.setPrice(100.0);
-
-        product2 = new Product();
-        product2.setProductId(2L);
-        product2.setProductName("Product 2");
-        product2.setPrice(200.0);
-    }
-
     @Test
-    void testAddProductToCart() {
-        cart.addProduct(product1);
+    public void testAddProduct() {
+        Cart cart = new Cart();
+        Product product = new Product();
+        product.setPrice(10.0);
+
+        cart.addProduct(product);
+
         assertEquals(1, cart.getProducts().size());
-        assertTrue(cart.getProducts().contains(product1));
+        assertEquals(10.0, cart.getTotalPrice());
     }
 
     @Test
-    void testRemoveProductFromCart() {
-        cart.addProduct(product1);
-        cart.addProduct(product2);
-        cart.removeProduct(product1);
-        assertEquals(1, cart.getProducts().size());
-        assertTrue(cart.getProducts().contains(product2));
-    }
+    public void testRemoveProduct() {
+        Cart cart = new Cart();
+        Product product = new Product();
+        product.setPrice(10.0);
+        cart.addProduct(product);
 
-    @Test
-    void testCalculateTotalPrice() {
-        cart.addProduct(product1);
-        cart.addProduct(product2);
-        cart.calculateTotalPrice();
-        assertEquals(300.0, cart.getTotalPrice());
-    }
+        cart.removeProduct(product);
 
-    @Test
-    void testEmptyCart() {
-        cart.addProduct(product1);
-        cart.addProduct(product2);
-        cart.emptyCart();
         assertEquals(0, cart.getProducts().size());
         assertEquals(0.0, cart.getTotalPrice());
     }
+
+    @Test
+    public void testCalculateTotalPrice() {
+        Cart cart = new Cart();
+        Product product1 = new Product();
+        product1.setPrice(10.0);
+        Product product2 = new Product();
+        product2.setPrice(20.0);
+        cart.addProduct(product1);
+        cart.addProduct(product2);
+
+        cart.calculateTotalPrice();
+
+        assertEquals(30.0, cart.getTotalPrice());
+    }
+
+    @Test
+    public void testEmptyCart() {
+        Cart cart = new Cart();
+        Product product = new Product();
+        product.setPrice(10.0);
+        cart.addProduct(product);
+
+        cart.emptyCart();
+
+        assertTrue(cart.getProducts().isEmpty());
+        assertEquals(0.0, cart.getTotalPrice());
+    }
 }
+

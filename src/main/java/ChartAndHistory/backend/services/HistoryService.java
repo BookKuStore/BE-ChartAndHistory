@@ -9,4 +9,5 @@ public interface HistoryService {
     List<History> getAllHistories();
     History getHistoryById(long id);
     History addCartToHistory(long historyId, Cart cart);
+    void restoreHistory(History history); // New method
 }

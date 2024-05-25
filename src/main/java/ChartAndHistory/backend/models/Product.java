@@ -22,5 +22,5 @@ public class Product {
 
     private double price;
 
-    private String imageUrl; // New attribute for product image URL
+    private String imageUrl;
 }
