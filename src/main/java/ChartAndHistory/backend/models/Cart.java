@@ -45,4 +45,3 @@ public class Cart {
         totalPrice = 0.0;
     }
 }
-
