@@ -1,24 +1,7 @@
-package ChartAndHistory.backend.controllers;
-
+import ChartAndHistory.backend.controllers.CartController;
 import ChartAndHistory.backend.models.Cart;
 import ChartAndHistory.backend.models.Product;
 import ChartAndHistory.backend.services.CartService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,11 +12,12 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class CartControllerTest {
+class CartControllerTest {
 
     @Mock
     private CartService cartService;
@@ -42,14 +26,14 @@ public class CartControllerTest {
     private CartController cartController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void testCreateCart() {
+    void createCartTest() {
         Cart cart = new Cart();
-        when(cartService.saveCart(any())).thenReturn(cart);
+        when(cartService.saveCart(cart)).thenReturn(cart);
 
         ResponseEntity<Cart> response = cartController.createCart(cart);
 
@@ -58,7 +42,7 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testGetAllCarts() {
+    void getAllCartsTest() {
         List<Cart> carts = new ArrayList<>();
         when(cartService.getAllCarts()).thenReturn(carts);
 
@@ -69,9 +53,9 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testGetCartById() {
-        Cart cart = new Cart();
+    void getCartByIdTest() {
         long id = 1;
+        Cart cart = new Cart();
         when(cartService.getCartById(id)).thenReturn(cart);
 
         ResponseEntity<Cart> response = cartController.getCartById(id);
@@ -80,23 +64,22 @@ public class CartControllerTest {
         assertEquals(cart, response.getBody());
     }
 
-//    @Test
-//    public void testAddProductToCart() {
-//        Cart cart = new Cart();
-//        Product product = new Product();
-//        long id = 1;
-//        when(cartService.addProductToCart(id, product)).thenReturn(cart);
-//
-//        ResponseEntity<Void> response = cartController.addProductToCart(id, product);
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//    }
+    @Test
+    void addProductToCartTest() {
+        long id = 1;
+        Product product = new Product();
+
+        ResponseEntity<Void> response = cartController.addProductToCart(id, product);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(cartService, times(1)).addProductToCart(id, product);
+    }
 
     @Test
-    public void testRemoveProductFromCart() {
-        Cart cart = new Cart();
-        Product product = new Product();
+    void removeProductFromCartTest() {
         long id = 1;
+        Product product = new Product();
+
         ResponseEntity<Void> response = cartController.removeProductFromCart(id, product);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -104,8 +87,9 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testDeleteCartById() {
+    void deleteCartByIdTest() {
         long id = 1;
+
         ResponseEntity<Void> response = cartController.deleteCartById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -113,8 +97,9 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testResetCart() {
+    void resetCartTest() {
         long id = 1;
+
         ResponseEntity<Void> response = cartController.resetCart(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -122,10 +107,10 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testGetProductFromCartById() {
-        Product product = new Product();
+    void getProductFromCartByIdTest() {
         long cartId = 1;
-        long productId = 1;
+        UUID productId = UUID.randomUUID();
+        Product product = new Product();
         when(cartService.getProductFromCartById(cartId, productId)).thenReturn(product);
 
         ResponseEntity<Product> response = cartController.getProductFromCartById(cartId, productId);
@@ -135,13 +120,13 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testRemoveProductFromCartByProductId() {
+    void removeProductFromCartByProductIdTest() {
         long id = 1;
-        long productId = 1;
+        UUID productId = UUID.randomUUID();
+
         ResponseEntity<Void> response = cartController.removeProductFromCartByProductId(id, productId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(cartService, times(1)).removeProductFromCartByProductId(id, productId);
     }
 }
-

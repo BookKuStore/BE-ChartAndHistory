@@ -2,21 +2,26 @@ package ChartAndHistory.backend.models;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ProductTest {
 
     @Test
-    public void testProductConstructor() {
-        Product product = new Product(1, "Test Product", 10.0, "test-url");
+    public void testProductCreation() {
+        UUID id = UUID.randomUUID();
+        String name = "Sample Product";
+        double price = 10.0;
+        String imageUrl = "http://example.com/image.jpg";
+        String tokenBuku = "lala";
 
-        assertEquals(1, product.getProductId());
-        assertEquals("Test Product", product.getProductName());
-        assertEquals(10.0, product.getPrice());
-        assertEquals("test-url", product.getImageUrl());
+        Product product = new Product(id, name, price, imageUrl, tokenBuku);
+
+        assertEquals(id, product.getProductId());
+        assertEquals(name, product.getProductName());
+        assertEquals(price, product.getPrice());
+        assertEquals(imageUrl, product.getImageUrl());
+        assertEquals(tokenBuku, product.getTokenBuku());
     }
 }
-

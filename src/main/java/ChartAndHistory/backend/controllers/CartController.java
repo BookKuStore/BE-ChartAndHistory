@@ -9,11 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -70,7 +67,7 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}/products/{productId}")
-    public ResponseEntity<Product> getProductFromCartById(@PathVariable long cartId, @PathVariable long productId) {
+    public ResponseEntity<Product> getProductFromCartById(@PathVariable long cartId, @PathVariable UUID productId) {
         Product product = cartService.getProductFromCartById(cartId, productId);
         if (product != null) {
             return ResponseEntity.ok(product);
@@ -80,7 +77,7 @@ public class CartController {
     }
 
     @DeleteMapping("/{id}/products/{productId}")
-    public ResponseEntity<Void> removeProductFromCartByProductId(@PathVariable long id, @PathVariable long productId) {
+    public ResponseEntity<Void> removeProductFromCartByProductId(@PathVariable long id, @PathVariable UUID productId) {
         cartService.removeProductFromCartByProductId(id, productId);
         return ResponseEntity.ok().build();
     }

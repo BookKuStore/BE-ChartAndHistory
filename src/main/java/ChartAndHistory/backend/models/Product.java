@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,12 +16,14 @@ import jakarta.persistence.*;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long productId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID productId;
 
     private String productName;
 
     private double price;
 
     private String imageUrl;
+
+    private String tokenBuku;
 }

@@ -3,6 +3,7 @@ package ChartAndHistory.backend.services;
 import ChartAndHistory.backend.models.Cart;
 import ChartAndHistory.backend.models.Product;
 import java.util.List;
+import java.util.UUID;
 
 public interface CartService {
     Cart saveCart(Cart cart);
@@ -12,8 +13,6 @@ public interface CartService {
     void removeProductFromCart(long cartId, Product product);
     void deleteCartById(long id);
     void resetCart(long cartId);
-    Product getProductFromCartById(long cartId, long productId);
-    void removeProductFromCartByProductId(long cartId, long productId);
-
+    Product getProductFromCartById(long cartId, UUID productId);
+    void removeProductFromCartByProductId(long cartId, UUID productId);
 }
-

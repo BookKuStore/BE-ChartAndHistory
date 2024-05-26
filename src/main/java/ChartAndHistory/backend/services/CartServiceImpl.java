@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CartServiceImpl implements CartService, CartObserver {
@@ -78,11 +79,11 @@ public class CartServiceImpl implements CartService, CartObserver {
     }
 
     @Override
-    public Product getProductFromCartById(long cartId, long productId) {
+    public Product getProductFromCartById(long cartId, UUID productId) {
         Cart cart = getCartById(cartId);
         if (cart != null) {
             for (Product product : cart.getProducts()) {
-                if (product.getProductId() == productId) {
+                if (product.getProductId().equals(productId)) {
                     return product;
                 }
             }
@@ -91,10 +92,11 @@ public class CartServiceImpl implements CartService, CartObserver {
     }
 
     @Override
-    public void removeProductFromCartByProductId(long cartId, long productId) {
+    public void removeProductFromCartByProductId(long cartId, UUID productId) {
         Cart cart = getCartById(cartId);
         if (cart != null) {
-            cart.getProducts().removeIf(product -> product.getProductId() == productId);
+            cart.getProducts().removeIf(product -> product.getProductId().equals(productId));
+            cart.calculateTotalPrice();
             saveCart(cart);
         }
     }
