@@ -5,6 +5,7 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -12,6 +13,14 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "ilhamzik")
+        property("sonar.organization", "ilhamzik")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
 }
 
 configurations {
